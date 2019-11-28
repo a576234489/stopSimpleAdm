@@ -1,0 +1,355 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>停车场编辑</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link rel="stylesheet"
+	href="../../../resources/js/layuiadmin/layui/css/layui.css" media="all">
+<link rel="stylesheet"
+	href="../../../resources/js/layuiadmin/style/admin.css" media="all">
+<script src="../../../resources/js/jquery/jquery-2.1.4.min.js"
+	type="text/javascript"></script>
+<script type="text/javascript"
+	src="../../../resources/js/jquery/jquery.form.min.js"></script>
+<!-- 引入angular的js -->
+<script type="text/javascript"
+	src="../../../resources/js/angularjs/angular.min.js"></script>
+<script type="text/javascript"
+	src="../../../resources/js/customer/base/base.js"></script>
+<script type="text/javascript"
+	src="../../../resources/js/customer/packinglot/packingLotService.js"></script>
+<script type="text/javascript"
+	src="../../../resources/js/customer/packinglot/packingLotController.js"></script>
+<!-- 引入select2的相关的css和js 
+<link rel="stylesheet" href="../../../resources/js/bootstrap/bootstrap.min.css">
+<script src="../../../resources/js/bootstrap/bootstrap.min.js"></script>
+<link rel="stylesheet" href="../../../resources/js/select2/select2.css" />
+<link rel="stylesheet" href="../../../resources/js/select2/select2-bootstrap.css" />
+<script src="../../../resources/js/select2/select2.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="../../../resources/js/angularjs/angular-select2.js">  </script>-->
+<link rel="stylesheet"
+	href="../../../resources/js/formSelect/formSelects-v4.css" />
+<script src="../../../resources/js/formSelect/formSelects-v4.js"
+	type="text/javascript"></script>
+<script type="text/javascript"
+	src="../../../resources/js/address/jsAddress.js"></script>
+</head>
+
+<body ng-app="stopSimple" ng-controller="packingLotController"
+	ng-init="findOne()">
+	<div class="layui-form plate-account-form"
+		lay-filter="layuiadmin-app-form-list" id="layuiadmin-app-form-list">
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">停车场名称</label>
+				<div class="layui-input-inline">
+					<input type="tel" name="name" ng-model = "entity.name" lay-verify="required"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">停车场地址</label>
+				<div class="layui-input-inline">
+					<input type="text" name="address" ng-model="entity.address" lay-verify="required"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">经度</label>
+				<div class="layui-input-inline">
+					<input type="tel" name="longitude" ng-model ="entity.longitude" lay-verify="required"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">纬度</label>
+				<div class="layui-input-inline">
+					<input type="text" name="latitude" ng-model = "entity.latitude" lay-verify="required"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">省</label>
+				<div class="layui-input-inline">
+					<select id="provice" name="provice" ng-model = "entity.provice" lay-verify="required"
+						lay-filter="brickType_provice">
+
+					</select>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">市</label>
+				<div class="layui-input-inline">
+					<select id="city" name="city" ng-model = "entity.city" lay-verify="required"
+						lay-filter="brickType_city">
+
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">区</label>
+				<div class="layui-input-inline">
+					<select id="area" name="area" ng-model = "entity.area" lay-verify="required"
+						lay-filter="brickType_area">
+
+					</select>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">总车位</label>
+				<div class="layui-input-inline">
+					<input type="number" name="totalParkNumber" ng-model="entity.totalParkNumber" lay-verify="required"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">营业时间</label>
+				 <div class="layui-input-inline">
+                    <input type="text" class="layui-input" id="open-time" name="openTime" ng-model="entity.openTime" placeholder="HH:mm:ss">
+                 </div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">结业时间</label>
+				 <div class="layui-input-inline">
+                    <input type="text" class="layui-input" id="end-time" name="endTime" ng-model="entity.endTime" placeholder="HH:mm:ss">
+                 </div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">预约价格</label>
+				<div class="layui-input-inline">
+					<input type="number" name="appointPrice" ng-model="entity.appointPrice" lay-verify="required"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">停车价格</label>
+				<div class="layui-input-inline">
+					<input type="number" name="price" ng-model="entity.price" lay-verify="required"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-col-md3">
+				<label class="layui-form-label">说明</label>
+				<div class="layui-input-block" style="margin-right: 30px;">
+					<input type="text" name="remark" ng-model="entity.remark" lay-verify="required"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<div class="layui-col-md3">
+				<label class="layui-form-label">停车场类型</label>
+				<div class="layui-input-block" style="margin-right: 30px;">
+					<select name="parkingLotTypeId" ng-model = "entity.parkingLotType" id="parking_lot_type_select"
+						lay-filter="parking_lot_type" xm-select="parking_lot_type"
+						xm-select-type="1">
+						<option value=""></option>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-col-md3">
+				<label class="layui-form-label">支付方式</label>
+				<div class="layui-input-block" style="margin-right: 30px;">
+					<select name="paymentWay" ng-model = "entity.paymentWay" id="payment_way_select"
+						lay-filter="payment_way" xm-select="payment_way"
+						xm-select-type="1">
+						<option value=""></option>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label" style="width: 130px;">是否支持长租办理：</label>
+			<div class="layui-input-block">
+				<input type="checkbox" lay-filter="is_long_rent"  lay-skin="switch"
+					lay-text="是|否" name="isLongrent2">
+				<input type="hidden"  name="isLongrent" class="is_longrent_input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label" style="width: 130px;">是否有充电桩：</label>
+				<input type="checkbox" lay-filter="is_charging_pile" 
+					lay-skin="switch" lay-text="是|否" name="isChargingpile2">
+				<input type="hidden"  name="isChargingpile" class="is_chargingpile_input">
+			</div>
+			<div class="layui-inline charging_pile_total" style="display: none">
+				<label class="layui-form-label" style="margin-left: 100px;">总充电桩数</label>
+				<div class="layui-input-inline">
+					<input type="number" lay-verify="required" name="totalChargingPileNumber" ng-model = "entity.totalChargingPileNumber"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label" style="width: 130px;">停车场轮播图：</label>
+			<div class="layui-input-block">
+				<div class="img-box">
+					<input type="file" name="filename" style="display: none"
+						id="uploadfile" accept="image/*" />
+					<div id="image"
+						style="width: 90px; height: 30px; line-height: 30px; text-align: center; background-color: #00b7ee; margin-left: 50px">选择图片</div>
+				</div>
+			</div>
+		</div>
+		<div id="image-tag" style="margin-left: 38px; margin-top: 12px">
+		</div>
+		<div class="layui-form-item layui-hide">
+	      <input type="button" lay-submit lay-filter="layuiadmin-app-form-submit" id="layuiadmin-app-form-submit" value="确认添加">
+	      <input type="button" lay-submit lay-filter="layuiadmin-app-form-edit" id="layuiadmin-app-form-edit" value="确认编辑">
+	    </div>
+	</div>
+
+	<script src="../../../resources/js/layuiadmin/layui/layui.js"></script>
+	<script>
+  layui.config({
+    base: '../../../resources/js/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'form','jquery', 'formSelects-v4','laydate'], function(){
+    var $ = layui.$
+    ,form = layui.form;
+    var formSelects = layui.formSelects;
+    var laydate = layui.laydate;
+    laydate.render({
+    	 elem: '#open-time'
+    	,type: 'time'
+        ,trigger: 'click'
+      });
+    laydate.render({
+   	 elem: '#end-time'
+   	 ,type: 'time'
+   	 ,trigger: 'click'
+     });
+    //监听提交
+    form.on('submit(layuiadmin-app-form-submit)', function(data){
+      var field = data.field; //获取提交的字段
+      var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引  
+      //提交 Ajax 成功后，关闭当前弹层并重载表格
+      //$.ajax({});
+      console.log(1111111111)
+      parent.layui.table.reload('LAY-app-content-list'); //重载表格
+      parent.layer.close(index); //再执行关闭 
+    });
+    //监听提交
+    form.on('submit(layuiadmin-app-form-edit)', function(data){
+      var field = data.field; //获取提交的字段
+      var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引  
+      //提交 Ajax 成功后，关闭当前弹层并重载表格
+      //$.ajax({});
+      console.log(1111111111)
+      parent.layui.table.reload('LAY-app-content-list'); //重载表格
+      parent.layer.close(index); //再执行关闭 
+    });
+    form.on('switch(is_charging_pile)', function(data){
+    	
+		if(data.elem.checked){//是否被选中，true或者false
+			$('.charging_pile_total').show();
+			$('.is_chargingpile_input').val(1);
+			console.log(data.value);
+			console.log(data.elem.checked);
+    	} else{
+    		$('.charging_pile_total').hide();
+    		$('.is_chargingpile_input').val(2);
+    	}
+	});
+	form.on('switch(is_long_rent)', function(data){
+		console.log(11)
+		if(data.elem.checked){//是否被选中，true或者false
+			$('.is_longrent_input').val(1);
+			console.log(data.value);
+			console.log(data.elem.checked);
+    	} else{
+    		$('.is_longrent_input').val(2);
+    	}
+	});
+    form.on('select(brickType_provice)', function(data){   
+    	changeProvince();
+    	form.render("select");
+    });
+    form.on('select(brickType_city)', function(data){   
+    	changeCity();
+    	form.render("select");
+    });
+  })
+  //轮播图页面显示 
+  $("#image").click(function(){
+    	$("#uploadfile")[0].value="";
+        $("#uploadfile").click();
+    })
+  //全局一个文件数组
+  var formdata=new FormData()
+  var i = 1;
+  $("#uploadfile").change(function(){
+	  console.log(1234);
+      var files=$(this)[0].files[0];    //获取文件信息
+      if(files)
+      {
+    	  if( files.size > 1024*1024 ){  //用size属性判断文件大小不能超过5M 
+    		  layer.msg('你上传的文件太大了! ', {icon: 2});
+    	  }else{
+    		  var reader=new FileReader();  //调用FileReader
+              reader.onload=function(evt){   //读取操作完成时触发。
+            	  var temp = 1;
+            	  for(let data of formdata.entries()){
+            		  temp++;
+          		  }
+            	  if(temp > 3){
+            		  layer.msg('轮播图数量不可以超过三张 ', {icon: 2});
+            	  }else{
+            		  formdata.append(i,evt.target.result);
+                	  $('#image-tag').html('');
+                      eachFileArray();
+                      i++; 
+            	  }
+              }
+              reader.readAsDataURL(files); //将文件读取为 DataURL(base64)
+    	  }
+      }
+      else{
+          alert("上传失败");
+      }
+  });
+	//展示添加的文件
+	function eachFileArray() {
+		for(let data of formdata.entries()){
+			console.log(data);
+			$("#image-tag").append('<div style="position: relative;width: 150px;height: 150px;margin-right: 6px;float: left;"><span  style="width: 30px;height: 30px;position: absolute;right: 0;top: 0;line-height: 30px;text-align: center;background-color: #f1f5fa;" onClick="img_del('+data[0]+')">X</span><img style="width: 150px;height: 150px;"id="image'+i+'"'+' src="'+data[1]+'"></div>');
+		}
+	}
+	//删除图片 
+	function img_del(i) {
+		formdata.delete(i);
+		$('#image-tag').html('');
+		for(let data of formdata.entries()){
+			console.log(data);
+			$("#image-tag").append('<div style="position: relative;width: 150px;height: 150px;margin-right: 6px;float: left;"><span  style="width: 30px;height: 30px;position: absolute;right: 0;top: 0;line-height: 30px;text-align: center;background-color: #f1f5fa;" onClick="img_del('+data[0]+')">X</span><img style="width: 150px;height: 150px;"id="image'+i+'"'+' src="'+data[1]+'"></div>');
+		}
+	}
+	var address = addressInit('provice', 'city', 'area', "", "", "");
+	$('.is_chargingpile_input').val(2);//初始化复选框值为2
+	$('.is_longrent_input').val(2);
+  </script>
+</body>
+</html>

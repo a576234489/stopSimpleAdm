@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.webside.parkinglot.mapper.ParkingLotMapper">
+	<!--mybatis ehcache缓存配置,以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 -->
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/> 
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+	<sql id="parkingLotAttributes">
+		parking_lot_number,
+		name,
+		address,
+		longitude,
+		latitude,
+		province,
+		city,
+		area,
+		is_longrent,
+		is_charging_pile,
+		image_urls,
+		total_charging_pile_number,
+		surplus_charging_pile_number,
+		total_park_number,
+		surplus_park_number,
+		open_time,
+		end_time,
+		price,
+		appoint_price,
+		remark,
+		create_time,
+		update_time
+	</sql>
+	<sql id="paymentWayAttributes">
+		payment_name
+	</sql>
+	<sql id="parkingLotTypeAttributes">
+		type
+	</sql>
+	<sql id="parkingLotSelectAttributes">
+		pl.parking_lot_number,
+		pl.name,
+		pl.address,
+		pl.longitude,
+		pl.latitude,
+		pl.province,
+		pl.city,
+		pl.area,
+		pl.is_longrent,
+		pl.is_charging_pile,
+		pl.image_urls,
+		pl.total_charging_pile_number,
+		pl.surplus_charging_pile_number,
+		pl.total_park_number,
+		pl.surplus_park_number,
+		pl.open_time,
+		pl.end_time,
+		pl.price,
+		pl.appoint_price,
+		pl.remark,
+		pl.create_time,
+		pl.update_time
+	</sql>
+	<resultMap id="baseMap" type="com.webside.parkinglot.model.ParkingLotEntity">
+		<id property="id" column="id"/>
+		<result property="parkingLotNumber" column="parking_lot_number" />
+		<result property="name" column="name"/>
+		<result property="address" column="address"/>
+		<result property="longitude" column="longitude"/>
+		<result property="latitude" column="latitude"/>
+		<result property="province" column="province"/>
+		<result property="city" column="city"/>
+		<result property="area" column="area"/>
+		<result property="isLongrent" column="is_longrent"/>
+		<result property="isChargingPile" column="is_charging_pile"/>
+		<result property="imageUrls" column="image_urls" />
+		<result property="totalChargingPileNumber" column="total_charging_pile_number"/>
+		<result property="surplusChargingPileNumber" column="surplus_charging_pile_number"/>
+		<result property="totalParkNumber" column="total_park_number"/>
+		<result property="surplusParkNumber" column="surplus_park_number"/>
+		<result property="openTime" column="open_time"/>
+		<result property="endTime" column="end_time"/>
+		<result property="price" column="price"/>
+		<result property="appointPrice" column="appoint_price"/>
+		<result property="remark" column="remark"/>
+		<result property="createTime" column="create_time"/>
+		<result property="updateTime" column="update_time"/>
+	</resultMap>
+	<resultMap id="parkingLotMap" type="com.webside.parkinglot.model.ParkingLotEntity" extends="baseMap">
+		<collection property="paymentWayEntitys" ofType="com.webside.parkinglot.model.PaymentWayEntity">
+          <id property="id" column="paymentId"/>
+		  <result property="paymentName" column="payment_name" />
+    	</collection>
+    	<collection property="parkingLotTypes" ofType="com.webside.parkinglot.model.ParkingLotType">
+          <id property="id" column="typeId"/>
+		  <result property="type" column="type" />
+    	</collection>
+	</resultMap>
+	<resultMap id="parkingLotTypeMap" type="com.webside.parkinglot.model.ParkingLotType">
+		<id property="id" column="id"/>
+		<result property="type" column="type" />
+	</resultMap>
+	<resultMap id="paymentWayMap" type="com.webside.parkinglot.model.PaymentWayEntity">
+		<id property="id" column="id"/>
+		<result property="paymentName" column="payment_name" />
+	</resultMap>
+	
+	<select id="findPage" resultMap="parkingLotMap" flushCache="true" useCache="true">
+		SELECT
+			pl.id,<include refid="parkingLotSelectAttributes"/>
+		FROM parking_lot pl
+		<where>
+			<if test="name != null and name != ''">
+				pl.name like '%${name}%'
+			</if>
+		</where>
+	</select>
+	<select id="findAllPaymentWay" resultMap="paymentWayMap" flushCache="true" useCache="true">
+		SELECT
+			id,<include refid="paymentWayAttributes"/>
+		FROM payment_way
+	</select>
+	<select id="findAllParkingLotType" resultMap="parkingLotTypeMap" flushCache="true" useCache="true">
+		SELECT
+			id,<include refid="parkingLotTypeAttributes"/>
+		FROM parking_lot_type
+	</select>
+	<select id="findPageSubset" resultMap="parkingLotMap" flushCache="true" useCache="true">
+		SELECT
+			pl.id,<include refid="parkingLotSelectAttributes"/>,pw.id as paymentId,pw.payment_name,plt.id as typeId,plt.type
+		FROM parking_lot pl
+		left join parking_lot_payment plp
+		on pl.id = plp.parking_lot_id
+		left join payment_way pw
+		on plp.payment_type_id = pw.id
+		
+		left join parking_type pt
+		on pl.id = pt.parking_lot_id
+		left join parking_lot_type plt
+		on plt.id = pt.parking_lot_type_id
+	</select>
+	<select id="findByName" resultMap="parkingLotMap" flushCache="true" useCache="true">
+		SELECT
+			id,<include refid="parkingLotAttributes"/>
+		FROM parking_lot where name = #{name}
+	</select>
+	<select id="findById" resultMap="parkingLotMap" flushCache="true" useCache="true">
+		SELECT
+			pl.id,<include refid="parkingLotSelectAttributes"/>,pw.id as paymentId,pw.payment_name,plt.id as typeId,plt.type
+		FROM parking_lot pl
+		left join parking_lot_payment plp
+		on pl.id = plp.parking_lot_id
+		left join payment_way pw
+		on plp.payment_type_id = pw.id
+		
+		left join parking_type pt
+		on pl.id = pt.parking_lot_id
+		left join parking_lot_type plt
+		on plt.id = pt.parking_lot_type_id
+		where pl.id = #{id}
+	</select>
+	<insert id="insert"  useGeneratedKeys="true" keyProperty="id">
+		insert into parking_lot (
+			<include refid="parkingLotAttributes"/>
+		)   
+		values (
+		#{parkingLotNumber},
+		#{name},
+		#{address},
+		#{longitude},
+		#{latitude},
+		#{province},
+		#{city},
+		#{area},
+		#{isLongrent},
+		#{isChargingPile},
+		#{imageUrls},
+		#{totalChargingPileNumber},
+		#{surplusChargingPileNumber},
+		#{totalParkNumber},
+		#{surplusParkNumber},
+		#{openTime},
+		#{endTime},
+		#{price},
+		#{appointPrice},
+		#{remark},
+		#{createTime},
+		#{updateTime}
+			)  
+	</insert>
+	<insert id="insertParkingLotPayment"  useGeneratedKeys="true" keyProperty="id">
+		insert into parking_lot_payment (
+			parking_lot_id,payment_type_id
+		)   
+		values (
+			#{parkingLotId},
+			#{paymentTypeId}
+			)  
+	</insert>
+	<insert id="insertParkingType"  useGeneratedKeys="true" keyProperty="id">
+		insert into parking_type (
+			parking_lot_id,parking_lot_type_id
+		)   
+		values (
+			#{parkingLotId},
+			#{parkingLotTypeId}
+			)  
+	</insert>
+	<delete id="deleteParkingLotPayment" >
+       delete from parking_lot_payment where parking_lot_id = #{id}  
+	</delete>
+	<delete id="deleteParkingType" >
+       delete from parking_type where parking_lot_id = #{id}  
+	</delete>
+	
+	<delete id="deleteParkingTypeBatch" >
+       <![CDATA[ 
+       delete from parking_type where parking_lot_id in
+       ]]> 
+       <foreach collection="array" item = "id" open="(" separator="," close=")">
+	    #{id}  
+	   </foreach> 
+	</delete>
+	
+	<delete id="deleteParkingLotPaymentBatch" >
+	   <![CDATA[ 
+       delete from parking_lot_payment where parking_lot_id in
+       ]]>
+       <foreach collection="array" item = "id" open="(" separator="," close=")">
+	    #{id}  
+	   </foreach>  
+	</delete>
+	
+	<delete id="deleteParking">
+		<![CDATA[  
+        delete from parking_lot where id in  
+    	]]>  
+	    <foreach collection="array" item = "id" open="(" separator="," close=")">
+	    #{id}  
+	    </foreach>  
+	</delete>
+	
+	<update id="update"  flushCache="true">
+		update parking_lot
+		<set>
+			<if test="parkingLotNumber != null and parkingLotNumber != ''">
+				parking_lot_number = #{parkingLotNumber},
+			</if>
+			<if test="name != null and name != ''">
+				name = #{name},
+			</if>
+			<if test="address != null and address != ''">
+				address = #{address},
+			</if>
+			<if test="longitude != null and longitude != ''">
+				longitude = #{longitude},
+			</if>
+			<if test="latitude != null and latitude != ''">
+				latitude = #{latitude},
+			</if>
+			
+			<if test="province != null and province != ''">
+				province = #{province},
+			</if>
+			<if test="city != null and city != ''">
+				city = #{city},
+			</if>
+			<if test="area != null and area != ''">
+				area = #{area},
+			</if>
+			<if test="isLongrent != null and isLongrent != ''">
+				is_longrent = #{isLongrent},
+			</if>
+			<if test="isChargingPile != null and isChargingPile != ''">
+				is_charging_pile = #{isChargingPile},
+			</if>
+			<if test="imageUrls != null and imageUrls != ''">
+				image_urls = #{imageUrls},
+			</if>
+			<if test="totalChargingPileNumber != null and name != '' or totalChargingPileNumber==0">
+				total_charging_pile_number = #{totalChargingPileNumber},
+			</if>
+			<if test="surplusChargingPileNumber != null and name != '' or surplusChargingPileNumber==0">
+				surplus_charging_pile_number = #{surplusChargingPileNumber},
+			</if>
+			<if test="totalParkNumber != null and totalParkNumber != '' or totalParkNumber==0">
+				total_park_number = #{totalParkNumber},
+			</if>
+			<if test="surplusParkNumber != null and surplusParkNumber != '' or totalParkNumber==0">
+				surplus_park_number = #{surplusParkNumber},
+			</if>
+			<if test="openTime != null and openTime != ''">
+				open_time = #{openTime},
+			</if>
+			<if test="endTime != null and endTime != ''">
+				end_time = #{endTime},
+			</if>
+			<if test="price != null and price != '' or price==0">
+				price = #{price},
+			</if>
+			<if test="appointPrice != null and appointPrice != '' or appointPrice==0">
+				appoint_price = #{appointPrice},
+			</if>
+			<if test="remark != null and remark != ''">
+				remark = #{remark},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+</mapper>

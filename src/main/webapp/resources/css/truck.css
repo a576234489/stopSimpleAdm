@@ -1,0 +1,82 @@
+.truck_content{ width:98%; height:100%; margin:13px auto 0; background:#fff; overflow:hidden; position:relative; }
+.truck_content .load{ width:136px; height:46px; line-height:46px; text-indent:58px; border-radius:4px; background:rgba(0,0,0,0.7) url(../images/demo1.gif) no-repeat 21px center;  position:absolute; left:50%; top:32%; margin:-26px 0 0 -68px; z-index:999999999;  display:none; color:#fff; background-size:28px 28px;}
+.truck_content .screenBox{ width:100%; background:#fff; border:1px #ddd solid; margin:0 auto; overflow:hidden; border-bottom:none; border-collapse:collapse; }
+.truck_content .screenBox tr td{ border:1px solid #ddd; height:42px; text-align:center;}
+.truck_content .screenBox tr td.w_1{ width:118px; background:#f1f1f1;  text-align:center; font-size:14px;}
+.truck_content .screenBox tr td.w_2{ color:#666; padding:0 0 0 18px; position:relative; text-align:left; }
+.truck_content .screenBox .cue_1{ margin:0 0 0 5px;}
+.truck_content .screenBox .cue_2{ margin:0 10px 0 0;}
+.truck_content .screenBox .text_1{ width:120px; height:28px; height:/*\**/21px\9;  border:1px solid #D0D0D0; margin:2px 10px 0 6px; font-size:13px; color:#555;  padding:0 0 0 5px;  padding:/*\**/7px 0 0 5px\9; -webkit-transition:all .2s linear 0s; -moz-transition:all .2s linear 0s; -o-transition:all .2s linear 0s; transition:all .2s linear 0s; border-radius:3px; background:#fff; position:relative; behavior:url(css/pie2.htc);}
+.truck_content .screenBox .text_1:hover{ border:1px solid #3bb4f2;}
+.truck_content .screenBox .text_1:focus{ border:1px solid #3bb4f2; box-shadow:0 0 4px rgba(102,175,233,0.6);}
+
+.truck_content .screenBox .text_2{ width:160px; height:28px; height:/*\**/21px\9; border:1px solid #D0D0D0; margin:2px 12px 0 6px; font-size:13px; color:#555;  padding:0 0 0 5px;  padding:/*\**/7px 0 0 5px\9; -webkit-transition:all .2s linear 0s; -moz-transition:all .2s linear 0s; -o-transition:all .2s linear 0s; transition:all .2s linear 0s; background:#fff url(../images/month_bg.gif) no-repeat 138px 6px; border-radius:3px; }
+.truck_content .screenBox .text_2:hover{ border:1px solid #3bb4f2;}
+.truck_content .screenBox .text_2:focus{ border:1px solid #3bb4f2; box-shadow:0 0 4px rgba(102,175,233,0.6);}
+
+.truck_content .screenBox .text_3{ width:160px; height:28px;  height:/*\**/21px\9; border:1px solid #D0D0D0; margin:2px 12px 0 6px; font-size:14px; color:#444;  padding:0 0 0 5px;  padding:/*\**/7px 0 0 5px\9; -webkit-transition:all .2s linear 0s; -moz-transition:all .2s linear 0s; -o-transition:all .2s linear 0s; transition:all .2s linear 0s; background:#fff url(../images/month2_bg.gif) no-repeat 138px 6px; border-radius:3px;}
+.truck_content .screenBox .text_3:hover{ border:1px solid #3bb4f2;}
+.truck_content .screenBox .text_3:focus{ border:1px solid #3bb4f2; box-shadow:0 0 4px rgba(102,175,233,0.6);}
+
+.truck_content .screenBox .text_4{ width:80px; height:28px; height:/*\**/21px\9;  border:1px solid #D0D0D0; margin:2px 10px 0 6px; font-size:13px; color:#555;  padding:0 0 0 5px;  padding:/*\**/7px 0 0 5px\9; -webkit-transition:all .2s linear 0s; -moz-transition:all .2s linear 0s; -o-transition:all .2s linear 0s; transition:all .2s linear 0s; border-radius:3px; background:#fff; position:relative; behavior:url(css/pie2.htc);}
+.truck_content .screenBox .text_4:hover{ border:1px solid #3bb4f2;}
+.truck_content .screenBox .text_4:focus{ border:1px solid #3bb4f2; box-shadow:0 0 4px rgba(102,175,233,0.6);}
+.truck_content form{
+	margin-left: 16px;
+    margin-top: 16px;
+    margin-right: 16px;
+}
+
+
+.truck_content .screenBox .btn_poss{ width:60px; height:30px; line-height:30px; text-align:center; color:#fff; background:#1D8DFD; border:none; border-radius:4px; margin:5px auto 0; font-size:13px; cursor:pointer;  -webkit-transition:background 0.2s ease-in; -moz-transition:background .2s ease-in; transition:background .2s ease-in; position:relative; behavior:url(css/pie2.htc); font-family:"Microsoft YaHei";}
+.truck_content .screenBox .btn_poss:hover{background:#23A0FD; } 
+
+.truck_content .screenBox .btn_no{width:60px; height:30px; line-height:30px; text-align:center; color:#fff; background:#999; border:none; border-radius:4px; margin:5px auto 0; font-size:13px; cursor:pointer;  -webkit-transition:background 0.2s ease-in; -moz-transition:background .2s ease-in; transition:background .2s ease-in; position:relative; behavior:url(css/pie2.htc); font-family:"Microsoft YaHei";}
+.truck_content .screenBox .btn_no:hover{background:#999; } 
+
+.truck_content .screenBox .info li{ float:left; margin:0 16px 0 6px;}
+
+.truck_content #search_list{ width:220px; min-height:33px; max-height:165px; background:#fff; border:1px solid #d0d0d0; box-shadow: 1px 1px 1px 0 #ececec; overflow-y:auto; overflow-x:hidden; display:none; position:absolute; left:205px; top:38px; z-index:9999;}
+.truck_content  #search_list li{ width:100%; height:32px; line-height:32px; border-bottom:1px solid #efefef; cursor:pointer; text-indent:7px; font-size:12px; color:#666;}
+.truck_content #search_list li:hover{ background:#1d8dfd; color:#fff;}
+.truck_content #search_list li:last-child{border-bottom:0px solid #efefef;}
+
+
+.input-check{width:16px;height:16px; background:url(../images/cbox_0.gif) no-repeat; margin:0 4px 0 0; border:0!important; }
+.input-check:checked{width:16px;height:16px; background:url(../images/cbox_2.gif) no-repeat;}
+
+.radio-check{width:18px;height:18px; background:url(../images/radio_0.gif) no-repeat; margin:0 4px 0 0; border:0!important; }
+.radio-check:checked{width:18px;height:18px; background:url(../images/radio_1.gif) no-repeat;}
+
+
+.more{ width:140px; text-align:center; color:#414040; height:29px; line-height:29px; background:url(../images/search_down.gif) no-repeat;  margin:-1px auto 4px; overflow:hidden; position:relative; z-index:99;  }
+.more a{ color:#414040; font-size:12px;font-family:Arial; text-decoration:none;}
+
+
+
+.truck_content .action{ width:100%; height:38px; margin:-8px auto 12px;  overflow:hidden;}
+.truck_content .action .add_discount a{ width:102px; height:30px; line-height:28px; background:#1D8DFD; color:#fff; text-align:center; border-radius:4px; font-size:13px; font-weight:bold; float:left; display:block; text-decoration:none; margin:0 12px 0 0; -webkit-transition:background 0.1s ease-in; -moz-transition:background .1s ease-in; transition:background .1s ease-in; position:relative; behavior:url(css/pie2.htc);}
+.truck_content .action .add_discount a:hover{background:#23A0FD; }
+.truck_content .action .add_discount em{ font-style:normal;  font-size:18px; display:inline-block; font-weight:normal;}
+
+
+.truck_content .action .add_Print{ float:right; height:38px; overflow:hidden;}
+.truck_content .action .add_Print li{ float:left;}
+.truck_content .action .add_Print li.add_p1 a{ width:66px; height:30px; line-height:30px; display:inline-block; background:#1D8DFD; color:#fff; margin:0 0px 0 0; float:left;  border-radius:4px; text-align:center; text-decoration:none; position:relative; behavior:url(css/pie2.htc);}
+.truck_content .action .add_Print li.add_p1 a:hover{background:#23A0FD; -webkit-transition:background 0.2s ease-in; -moz-transition:background .2s ease-in; transition:background .2s ease-in;}
+ 
+.truck_content .data_wd{ width:100%; overflow-x:scroll;}
+.truck_content #table1{ width:1400px; border-collapse:collapse; margin:0 auto; }
+.truck_content #table1 th{ height:45px; text-align:left; line-height:45px; background:#eaeaea; color:#222;  font-size:14px; font-weight:normal; text-align:center; font-weight:600; }
+
+.truck_content #table1 tr{cursor:pointer;  -webkit-transition:background .18s linear 0s; -moz-transition:background .18s linear 0s; -o-transition:background .18s linear 0s; transition:background .18s linear 0s;}
+.truck_content #table1 tr td,.truck_content #table1 tr th{ border:1px solid #ddd;} 
+.truck_content #table1 tr td{ height:41px; line-height:40px; text-align:center; color:#444; font-size:14px;}
+.truck_content #table1 tr.color2{ background:#f8f8f8; }
+.truck_content #table1 tr.color1{ background:#f5fafe; }
+.truck_content #table1 tr.color3{ background:#e5f6ff; }
+
+.truck_content #table1 .nodata{color:#ff0000;}
+
+
+.truck_content .page{ width:100%; text-align:center; margin:30px 0 0px; height:36px; line-height:36px; color:#333; position:relative;}

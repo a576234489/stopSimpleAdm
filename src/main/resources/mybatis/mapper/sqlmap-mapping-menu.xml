@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.webside.menu.mapper.MenuMapper">
+	
+	<!--mybatis ehcache缓存配置,以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 -->
+	 
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/> 
+	 
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+
+	<sql id="menuAttributes">
+		s_id,
+		s_parent_id,
+		s_name,
+		s_source_key,
+		s_type,
+		s_source_url,
+		s_level,
+		s_icon,
+		s_is_hide,
+		s_description,
+		s_create_time,
+		s_update_time
+	</sql>
+
+	
+	<resultMap id="menuMap" type="com.webside.menu.model.MenuEntity">
+		<id property="id" column="s_id"/>
+		<result property="parentId" column="s_parent_id"/>
+		<result property="name" column="s_name"/>
+		<result property="sourceKey" column="s_source_key"/>
+		<result property="type" column="s_type"/>
+		<result property="sourceUrl" column="s_source_url"/>
+		<result property="level" column="s_level"/>
+		<result property="icon" column="s_icon"/>
+		<result property="isHide" column="s_is_hide"/>
+		<result property="description" column="s_description"/>
+		<result property="createTime" column="s_create_time"/>
+		<result property="updateTime" column="s_update_time"/>
+		<result property="parentName" column="s_parentName"/>
+		<result property="isExpanded" column="s_isExpanded"/>
+		<result property="isLeaf" column="s_isLeaf"/>
+		<result property="selected" column="s_selected"/>
+		<result property="isOpen" column="s_is_open"/>
+	</resultMap>
+	<select id="findPage" resultMap="menuMap" flushCache="true" useCache="true">
+		SELECT t1.s_id,
+			t1.s_parent_id,
+			t1.s_name,
+			t2.s_name AS s_parentName,
+			t1.s_source_key,
+			t1.s_type,
+			t1.s_source_url,
+			t1.s_level,
+			t1.s_icon,
+			t1.s_is_hide,
+			t1.s_description,
+			t1.s_is_open,
+			t1.s_create_time,
+			t1.s_update_time 
+		FROM tb_resource t1 LEFT JOIN tb_resource t2 ON t1.s_parent_id = t2.s_id
+	</select>
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into tb_resource (
+			s_parent_id,
+			s_name,
+			s_source_key,
+			s_type,
+			s_source_url,
+			s_icon,
+			s_is_hide,
+			s_description,
+			s_is_open,
+			s_create_time,
+			s_update_time
+			)   
+		values (
+			#{parentId,jdbcType=INTEGER},
+			#{name},
+			#{sourceKey},
+			#{type},
+			#{sourceUrl},
+			#{icon},
+			#{isHide},
+			#{description},
+			#{isOpen},
+			#{createTime},
+			#{updateTime}
+			)  
+	</insert>
+	<select id="findById" resultMap="menuMap" useCache="false">
+		SELECT t1.s_id,
+			t1.s_parent_id,
+			t1.s_name,
+			t2.s_name AS s_parentName,
+			t1.s_source_key,
+			t1.s_type,
+			t1.s_source_url,
+			t1.s_level,
+			t1.s_icon,
+			t1.s_is_hide,
+			t1.s_description,
+			t1.s_is_open,
+			t1.s_create_time,
+			t1.s_update_time 
+		FROM tb_resource t1 LEFT JOIN tb_resource t2 ON t1.s_parent_id = t2.s_id
+		where t1.s_id = ${id}
+	</select>
+	<select id="findByNameUrl" resultMap="menuMap" useCache="false">
+		SELECT t1.s_id,
+			t1.s_parent_id,
+			t1.s_name,
+			t2.s_name AS s_parentName,
+			t1.s_source_key,
+			t1.s_type,
+			t1.s_source_url,
+			t1.s_level,
+			t1.s_icon,
+			t1.s_is_hide,
+			t1.s_description,
+			t1.s_is_open,
+			t1.s_create_time,
+			t1.s_update_time 
+		FROM tb_resource t1 LEFT JOIN tb_resource t2 ON t1.s_parent_id = t2.s_id
+		<where>
+			<if test="name != null and name != ''">
+				t1.s_name = #{name}
+			</if>
+			<if test="sourceUrl != null and sourceUrl != ''">
+				and t1.s_source_url = #{sourceUrl}
+			</if>
+		</where>
+	</select>
+	<update id="update" flushCache="true">
+		update tb_resource set
+		s_name = #{name},
+		s_source_url = #{sourceUrl},
+		s_source_key = #{sourceKey},
+		s_update_time = #{updateTime}
+		where s_id = ${id}
+	</update>
+	<delete id="deleteResources">
+		<![CDATA[  
+       delete from tb_resource where s_id in  
+    	]]>  
+	    <foreach collection="array" item = "id" open="(" separator="," close=")">
+	    #{id}  
+	    </foreach>  
+	</delete>
+	<delete id="deleteResourcesRole">
+		<![CDATA[  
+       delete from tb_resources_role where s_id in  
+    	]]>  
+	    <foreach collection="array" item = "id" open="(" separator="," close=")">
+	    #{id}  
+	    </foreach>  
+	</delete>
+</mapper>

@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.webside.plateformaccount.mapper.PlateformAccountMapper">
+	<!--mybatis ehcache缓存配置,以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 -->
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/> 
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+	<sql id="userAttributes">
+		u_id,
+		u_name,
+		u_account_name,
+		u_password,
+		u_delete_status,
+		u_locked,
+		u_description,
+		u_credentials_salt,
+		u_creator_name,
+		u_create_time,
+		u_update_time
+	</sql>
+	<sql id="userInfoAttributes">
+		u_id,
+		u_sex,
+		u_birthday,
+		u_telephone,
+		u_email,
+		u_address,
+		u_create_time
+	</sql>
+	<resultMap id="userMap" type="com.webside.plateformaccount.model.UserEntity">
+		<id property="id" column="u_id"/>
+		<result property="userName" column="u_name" />
+		<result property="accountName" column="u_account_name"/>
+		<result property="password" column="u_password"/>
+		<result property="deleteStatus" column="u_delete_status"/>
+		<result property="locked" column="u_locked"/>
+		<result property="description" column="u_description"/>
+		<result property="credentialsSalt" column="u_credentials_salt"/>
+		<result property="creatorName" column="u_creator_name"/>
+		<result property="createTime" column="u_create_time"/>
+		<result property="updateTime" column="u_update_time"/>
+		<association property="role" column="id" javaType="com.webside.role.model.RoleEntity">
+			<id property="id" column="r_id"/>
+			<result property="name" column="r_name"/>
+			<result property="key" column="r_key"/>
+			<result property="status" column="r_status"/>
+			<result property="description" column="r_description"/>
+			<result property="createTime" column="r_create_time"/>
+			<result property="updateTime" column="r_update_time"/>
+		</association>
+		<association property="userInfo" column="id" javaType="com.webside.plateformaccount.model.UserInfoEntity">
+			<id property="id" column="u_id"/>
+			<result property="sex" column="u_sex"/>
+			<result property="birthday" column="u_birthday"/>
+			<result property="telephone" column="u_telephone"/>
+			<result property="email" column="u_email"/>
+			<result property="address" column="u_address"/>
+			<result property="createTime" column="u_create_time"/>
+		</association>
+	</resultMap>
+	
+	<select id="findPage"  resultMap="userMap" flushCache="true" useCache="true">
+		SELECT u.u_id,
+		u.u_name,
+		u.u_account_name,
+		u.u_password,
+		u.u_delete_status,
+		u.u_locked,
+		u.u_description,
+		u.u_credentials_salt,
+		u.u_creator_name,
+		u.u_create_time,
+		u.u_update_time,
+		r.r_id,
+		r.r_name,
+		r.r_key,
+		r.r_status,
+		r.r_description,
+		r.r_create_time,
+		r.r_update_time
+		FROM tb_user u LEFT JOIN tb_role_user ru ON u.u_id = ru.u_id LEFT JOIN tb_role r ON ru.r_id = r.r_id 
+		<where>
+			<if test="userName != null and userName != ''">
+				u.u_name like '%${userName}%'
+			</if>
+			<if test="accountName != null and accountName != ''">
+				and u.u_account_name like '%${accountName}%'
+			</if>
+			<if test="roleId != null and roleId != '' and roleId != 0">
+				and r.r_id = #{roleId}
+			</if>
+			<if test="locked != null and locked != '' and locked != -1">
+				and u.u_locked = #{locked}
+			</if>
+		</where>
+	</select>
+	
+	<select id="findByName"  resultMap="userMap" flushCache="true" useCache="true">
+		SELECT u.u_id,
+		u.u_name,
+		u.u_account_name,
+		u.u_password,
+		u.u_delete_status,
+		u.u_locked,
+		u.u_description,
+		u.u_credentials_salt,
+		u.u_creator_name,
+		u.u_create_time,
+		u.u_update_time,
+		r.r_id,
+		r.r_name,
+		r.r_key,
+		r.r_status,
+		r.r_description,
+		r.r_create_time,
+		r.r_update_time
+		FROM tb_user u JOIN tb_role_user ru ON u.u_id = ru.u_id JOIN tb_role r ON ru.r_id = r.r_id 
+		where u.u_account_name = #{name}
+	</select>
+	
+	<select id="findById" resultMap="userMap" flushCache="true" useCache="true">
+				SELECT u.u_id,
+		u.u_name,
+		u.u_account_name,
+		u.u_password,
+		u.u_delete_status,
+		u.u_locked,
+		u.u_description,
+		u.u_credentials_salt,
+		u.u_creator_name,
+		u.u_create_time,
+		u.u_update_time,
+		r.r_id,
+		r.r_name,
+		r.r_key,
+		r.r_status,
+		r.r_description,
+		r.r_create_time,
+		r.r_update_time,
+		i.u_sex,
+		i.u_birthday,
+		i.u_telephone,
+		i.u_email,
+		i.u_address
+		FROM tb_user u JOIN tb_role_user ru ON u.u_id = ru.u_id JOIN tb_role r ON ru.r_id = r.r_id JOIN tb_user_info i ON u.u_id = i.u_id 
+		where u.u_id = ${id}
+	</select>
+	
+	<select id="findAll" resultMap="userMap" flushCache="true" useCache="true">
+		SELECT u.u_id,
+		u.u_name,
+		u.u_account_name,
+		u.u_password,
+		u.u_delete_status,
+		u.u_locked,
+		u.u_description,
+		u.u_credentials_salt,
+		u.u_creator_name,
+		u.u_create_time,
+		u.u_update_time
+		FROM tb_user u
+		where u.u_id not in(select u_id from tb_role_user where r_id =1)
+	</select>
+	
+	<select id="findByPass" resultMap="userMap" flushCache="true" useCache="true">
+		SELECT u.u_id,
+		u.u_name,
+		u.u_account_name,
+		u.u_password,
+		u.u_delete_status,
+		u.u_locked,
+		u.u_description,
+		u.u_credentials_salt,
+		u.u_creator_name,
+		u.u_create_time,
+		u.u_update_time
+		FROM tb_user u
+		where u.u_password = #{oldPassWord}
+	</select>
+	
+	<insert id="insert"  useGeneratedKeys="true" keyProperty="id">
+		insert into tb_user (
+			u_name,
+			u_account_name,
+			u_password,
+			u_description,
+			u_credentials_salt,
+			u_creator_name,
+			u_create_time
+			)   
+		values (
+			#{userName},
+			#{accountName},
+			#{password},
+			#{description},
+			#{credentialsSalt},
+			#{creatorName},
+			#{createTime}
+			)  
+	</insert>
+	
+		<insert id="insertUserRole"  useGeneratedKeys="true" keyProperty="role.id">
+		insert into tb_role_user (
+			u_id,
+			r_id,
+			t_create_time
+			)   
+		values (
+			#{id},
+			#{role.id},
+			now()
+			)  
+	</insert>
+	
+	<update id="update"  flushCache="true">
+		update tb_user
+		<set>
+			<if test="userName != null and userName != ''">
+				u_name = #{userName},
+			</if>
+			<if test="password != null and password != ''">
+				u_password = #{password},
+			</if>
+			<if test="credentialsSalt != null and credentialsSalt != ''">
+				u_credentials_salt = #{credentialsSalt},
+			</if>
+			<if test="description != null and description != ''">
+				u_description = #{description},
+			</if>
+			<if test="creatorName != null and creatorName != ''">
+				u_creator_name = #{creatorName},
+			</if>
+			<if test="deleteStatus != null">
+				u_delete_status = ${deleteStatus},
+			</if>
+			<if test="locked != null">
+				u_locked = ${locked},
+			</if>
+			<if test="updateTime != null">
+				u_update_time = #{updateTime},
+			</if>
+		</set>
+		where u_id = ${id}
+	</update>
+	
+	<update id="updateUserRole"  flushCache="true">
+		update tb_role_user
+		set r_id = ${role.id}
+		where u_id = ${id}
+	</update>
+	
+	<delete id="deleteBatchById">
+		<![CDATA[  
+       delete from tb_user where u_id in  
+    	]]>  
+	    <foreach collection="array" item = "id" open="(" separator="," close=")">
+	    #{id}  
+	    </foreach>  
+	</delete>
+	
+	<delete id="deleteBatchUserRole">
+		<![CDATA[  
+       delete from tb_role_user where u_id in  
+    	]]>  
+	    <foreach collection="array" item = "id" open="(" separator="," close=")">
+	    #{id}  
+	    </foreach>  
+	</delete>
+	<delete id="deleteBatchUserInfo">
+		<![CDATA[  
+       delete from tb_user_info where u_id in  
+    	]]>  
+	    <foreach collection="array" item = "id" open="(" separator="," close=")">
+	    #{id}  
+	    </foreach>  
+	</delete>
+	
+	<insert id="insertUserInfo"  useGeneratedKeys="true" keyProperty="userInfo.id">
+		insert into tb_user_info (
+			<include refid="userInfoAttributes"/>
+			)   
+		values (
+			#{userInfo.id},
+			#{userInfo.sex},
+			#{userInfo.birthday},
+			#{userInfo.telephone},
+			#{userInfo.email},
+			#{userInfo.address},
+			#{userInfo.createTime}
+			)  
+	</insert>
+	
+	
+	<update id="updateUserInfo"  flushCache="true">
+		update tb_user_info
+		<set>
+			<if test="sex != null and sex != ''">
+				u_sex = #{sex},
+			</if>
+			<if test="birthday != null">
+				u_birthday = #{birthday},
+			</if>
+			<if test="telephone != null and telephone != ''">
+				u_telephone = #{telephone},
+			</if>
+			<if test="email != null and email != ''">
+				u_email = #{email},
+			</if>
+			<if test="address != null and address != ''">
+				u_address = #{address},
+			</if>
+		</set>
+		where u_id = ${id}
+	</update>
+	
+</mapper>

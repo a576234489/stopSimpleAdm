@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.webside.department.mapper.DepartmentMapper">
+	<!--mybatis ehcache缓存配置,以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 -->
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/> 
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+
+	<sql id="depaAttributes">
+		d1.id,
+		d1.name,
+		d1.parent_id,
+		d1.create_date
+	</sql>
+
+	<resultMap id="depaMap" type="com.webside.department.model.DepartmentEntity">
+		<id property="id" column="id"/>
+		<result property="name" column="name" />
+		<result property="parentId" column="parent_id"/>
+		<result property="parentName" column="parent_name"/>
+		<result property="createDate" column="create_date"/>
+		<result property="isLeaf" column="is_leaf"/>
+	</resultMap>
+	
+	<select id="queryListByPage" parameterType="map" resultMap="depaMap" flushCache="true" useCache="true">
+		SELECT 
+		<include refid="depaAttributes"/>
+		,d2.name as parent_name
+		FROM department d1
+		LEFT JOIN department d2 on d1.parent_id = d2.id
+		<where>
+			<if test="name !=null and name !=''">
+				d1.name like '%${name}%'
+			</if>
+		</where>
+		order by d1.parent_id
+	</select>
+	
+	<select id="findById" parameterType="long" resultMap="depaMap" flushCache="true" useCache="true">
+		SELECT 
+		<include refid="depaAttributes"/>
+		,d2.name as parent_name
+		FROM department d1
+		LEFT JOIN department d2 on d1.parent_id = d2.id
+		where d1.id = #{id} 
+	</select>
+	
+	<select id="queryTreeGridListByPage" parameterType="map" resultMap="depaMap" flushCache="true" useCache="true">
+		SELECT <include refid="depaAttributes"/>,
+		 CASE WHEN 
+		 	(SELECT count(id) FROM department d2 where d2.parent_id = d1.id)>0 
+		 THEN 
+		 	FALSE 
+		 ELSE 
+		 	TRUE 
+		 END AS is_leaf
+		 FROM department d1
+		<where>
+			<if test="name !=null and name !=''">
+				d1.name like '%${name}%'
+			</if>
+			<choose>
+				<when test="parentId eq null or parentId == ''">and d1.parent_id =0</when>
+				<otherwise>and d1.parent_id = ${parentId}</otherwise>
+			</choose>
+		</where>
+	</select>
+	
+	<insert id="insert" parameterType="com.webside.department.model.DepartmentEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into department (
+			name,
+			parent_id,
+			create_date
+			)
+		values (
+			#{name},
+			#{parentId},
+			#{createDate}
+			)
+	</insert>
+	
+	<update id="update"  parameterType="com.webside.department.model.DepartmentEntity" flushCache="true">
+		update department
+		<set>
+			name= #{name},
+			parent_id = #{parentId}
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="deleteById" parameterType="long">
+       delete from department where id = #{id}  
+	</delete>
+</mapper>

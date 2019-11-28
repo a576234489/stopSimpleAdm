@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.webside.report.mapper.ReportMapper">
+	<!--mybatis ehcache缓存配置,以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 -->
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/> 
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+	<resultMap id="reportEntityMap" type="com.webside.report.model.ReportEntity">
+		<id property="id" column="id"/>
+		<result property="totalBill" column="totalBill" />
+		<result property="totalAmount" column="totalAmount" />
+		<result property="totalDeductionAmount" column="totalDeductionAmount" />
+		<result property="totalBusinessAmount" column="totalBusinessAmount" />
+		<result property="name" column="name" />
+		<result property="parkingLotNumber" column="parking_lot_number" />
+		<result property="totalCashAmount" column="totalCashAmount" />
+		<result property="cardQantity" column="cardQantity" />
+		<result property="tatolCardMoney" column="tatolCardMoney" />
+		
+		<result property="totalBillAll" column="totalBillAll" />
+		<result property="totalAmountAll" column="totalAmountAll" />
+		<result property="totalDeductionAmountAll" column="totalDeductionAmountAll" />
+		<result property="totalBusinessAmountAll" column="totalBusinessAmountAll" />
+		<result property="totalCashAmountAll" column="totalCashAmountAll" />
+		<result property="cardQantityAll" column="cardQantityAll" />
+		<result property="tatolCardMoneyAll" column="tatolCardMoneyAll" />
+	</resultMap>
+	<!-- 订单报表查询 -->
+	<select id="findReport" resultMap="reportEntityMap" flushCache="true" useCache="true">
+		SELECT
+		a.parking_lot_id AS id,a.totalBill,a.totalAmount,a.totalDeductionAmount,a.totalBusinessAmount,a.name,a.parking_lot_number,b.totalCashAmount
+		FROM
+		(SELECT o.parking_lot_id,COUNT(*) AS totalBill,SUM(o.amount) AS totalAmount,SUM(o.deduction_amount) AS totalDeductionAmount,SUM(o.business_amount) AS totalBusinessAmount,o.id,pl.name,pl.parking_lot_number
+		FROM s_order o
+		LEFT JOIN parking_lot pl
+		ON o.parking_lot_id = pl.id
+		<where>
+			o.status = 2 AND o.create_time BETWEEN #{openTime} AND #{endTime}
+			<if test="carParkName != null and carParkName != ''">
+				and pl.name = #{carParkName}
+			</if>
+			<if test="carParkNumber != null and carParkNumber != ''">
+				and pl.parking_lot_number = #{carParkNumber}
+			</if>
+		</where>
+		GROUP BY pl.id) a
+		LEFT JOIN
+		(SELECT o.parking_lot_id,SUM(o.amount) AS totalCashAmount
+		FROM s_order o
+		LEFT JOIN parking_lot pl
+		ON o.parking_lot_id = pl.id
+		<where>
+			o.status = 2 AND o.payment_way_id = 1 and o.create_time BETWEEN #{openTime} AND #{endTime}
+			<if test="carParkName != null and carParkName != ''">
+				and pl.name = #{carParkName}
+			</if>
+			<if test="carParkNumber != null and carParkNumber != ''">
+				and pl.parking_lot_number = #{carParkNumber}
+			</if>
+		</where>
+		GROUP BY pl.id) b
+		ON a.parking_lot_id= b.parking_lot_id
+	</select>
+	<!-- 订单报表查询 汇总-->
+	<select id="findReportAll" resultMap="reportEntityMap" flushCache="true" useCache="true">
+		select sum(t.totalBill) as totalBillAll,sum(t.totalAmount) as totalAmountAll,sum(t.totalDeductionAmount) as totalDeductionAmountAll,sum(t.totalBusinessAmount) as totalBusinessAmountAll,sum(t.totalCashAmount) as totalCashAmountAll
+		FROM
+		(SELECT
+		a.parking_lot_id AS id,a.totalBill,a.totalAmount,a.totalDeductionAmount,a.totalBusinessAmount,a.name,a.parking_lot_number,b.totalCashAmount
+		FROM
+		(SELECT o.parking_lot_id,COUNT(*) AS totalBill,SUM(o.amount) AS totalAmount,SUM(o.deduction_amount) AS totalDeductionAmount,SUM(o.business_amount) AS totalBusinessAmount,o.id,pl.name,pl.parking_lot_number
+		FROM s_order o
+		LEFT JOIN parking_lot pl
+		ON o.parking_lot_id = pl.id
+		<where>
+			o.status = 2 AND o.create_time BETWEEN #{openTime} AND #{endTime}
+			<if test="carParkName != null and carParkName != ''">
+				and pl.name = #{carParkName}
+			</if>
+			<if test="carParkNumber != null and carParkNumber != ''">
+				and pl.parking_lot_number = #{carParkNumber}
+			</if>
+		</where>
+		GROUP BY pl.id) a
+		LEFT JOIN
+		(SELECT o.parking_lot_id,SUM(o.amount) AS totalCashAmount
+		FROM s_order o
+		LEFT JOIN parking_lot pl
+		ON o.parking_lot_id = pl.id
+		<where>
+			o.status = 2 AND o.payment_way_id = 1 and o.create_time BETWEEN #{openTime} AND #{endTime}
+			<if test="carParkName != null and carParkName != ''">
+				and pl.name = #{carParkName}
+			</if>
+			<if test="carParkNumber != null and carParkNumber != ''">
+				and pl.parking_lot_number = #{carParkNumber}
+			</if>
+		</where>
+		GROUP BY pl.id) b
+		ON a.parking_lot_id= b.parking_lot_id)t
+	</select>
+	<!-- 办卡记录查询汇总 -->
+	<select id="findHandleCardAll" resultMap="reportEntityMap" flushCache="true" useCache="true">
+		select sum(t.cardQantity) as cardQantityAll,sum(t.tatolCardMoney) as tatolCardMoneyAll
+		FROM
+		(SELECT ulrr.parking_lot_id AS id,pl.name,pl.parking_lot_number,COUNT(*) AS cardQantity,SUM(ulrr.handling_expenses) tatolCardMoney
+		FROM s_user_long_rent_record ulrr
+		LEFT JOIN parking_lot pl
+		ON ulrr.parking_lot_id = pl.id
+		<where>
+			ulrr.handle_time BETWEEN #{openTime} AND #{endTime}
+			<if test="carParkName != null and carParkName != ''">
+				and pl.name = #{carParkName}
+			</if>
+			<if test="carParkNumber != null and carParkNumber != ''">
+				and pl.parking_lot_number = #{carParkNumber}
+			</if>
+		</where>
+		GROUP BY pl.id)t
+	</select>
+	<!-- 办卡记录查询 -->
+	<select id="findHandleCard" resultMap="reportEntityMap" flushCache="true" useCache="true">
+		SELECT ulrr.parking_lot_id AS id,pl.name,pl.parking_lot_number,COUNT(*) AS cardQantity,SUM(ulrr.handling_expenses) tatolCardMoney
+		FROM s_user_long_rent_record ulrr
+		LEFT JOIN parking_lot pl
+		ON ulrr.parking_lot_id = pl.id
+		<where>
+			ulrr.handle_time BETWEEN #{openTime} AND #{endTime}
+			<if test="carParkName != null and carParkName != ''">
+				and pl.name = #{carParkName}
+			</if>
+			<if test="carParkNumber != null and carParkNumber != ''">
+				and pl.parking_lot_number = #{carParkNumber}
+			</if>
+		</where>
+		GROUP BY pl.id
+	</select>
+</mapper>

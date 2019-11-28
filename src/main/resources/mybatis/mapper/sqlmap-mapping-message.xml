@@ -1,0 +1,609 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.webside.message.mapper.MessageMapper">
+	<!--mybatis ehcache缓存配置,以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 -->
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/> 
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+	
+	<resultMap id="presentCarMap" type="com.webside.message.model.MessageEntity">
+		<id property="id" column="id"/>
+		<result property="carParkName" column="name" />
+		<result property="carParkNumber" column="parking_lot_number" />
+		<result property="carNumber" column="car_number" />
+		<result property="admissionTime" column="create_time" />
+		<result property="longRentType" column="longRentType" />
+		<result property="expireTime" column="expire_time" />
+		<collection property="parkingLotTypes" column="id"
+			ofType="com.webside.parkinglot.model.ParkingLotType">
+			<id property="id" column="parkingTypeId" />
+			<result property="type" column="type" />
+		</collection>
+	</resultMap>
+	<resultMap id="accessCarMap" type="com.webside.message.model.MessageEntity">
+		<id property="id" column="id"/>
+		<result property="carParkName" column="name" />
+		<result property="carParkNumber" column="parking_lot_number" />
+		<result property="carNumber" column="car_number" />
+		<result property="admissionTime" column="create_time" />
+		<result property="exitTime" column="exit_time" />
+		<result property="longRentType" column="longRentType" />
+		<result property="expireTime" column="expire_time" />
+		<collection property="parkingLotTypes" column="id"
+			ofType="com.webside.parkinglot.model.ParkingLotType">
+			<id property="id" column="parkingTypeId" />
+			<result property="type" column="type" />
+		</collection>
+	</resultMap>
+	<resultMap id="orderMap" type="com.webside.message.model.MessageEntity">
+		<id property="id" column="id"/>
+		<result property="carParkName" column="name" />
+		<result property="carParkNumber" column="parking_lot_number" />
+		<result property="carNumber" column="car_number" />
+		<result property="admissionTime" column="create_time" />
+		<result property="exitTime" column="exit_time" />
+		<result property="longRentType" column="longRentType" />
+		<result property="amount" column="amount" />
+		<result property="deductionAmount" column="deduction_amount" />
+		<result property="businessAmount" column="business_amount" />
+		<result property="orderNumber" column="order_number" />
+		<result property="expireTime" column="expire_time" />
+	</resultMap>
+	<resultMap id="stopCarDetailMap" type="com.webside.message.model.MessageEntity">
+		<id property="id" column="id"/>
+		<result property="carParkName" column="name" />
+		<result property="carParkNumber" column="parking_lot_number" />
+		<result property="carNumber" column="car_number" />
+		<result property="admissionTime" column="create_time" />
+		<result property="exitTime" column="exit_time" />
+		<result property="longRentType" column="longRentType" />
+		<result property="amount" column="amount" />
+		<result property="deductionAmount" column="deduction_amount" />
+		<result property="businessAmount" column="business_amount" />
+		<result property="orderNumber" column="order_number" />
+		<result property="orderNumber" column="order_number" />
+		<result property="paymentWayName" column="paymentWayName" />
+		<result property="totalBusinessAmount" column="totalBusinessAmount" />
+		<result property="totalDeductionAmount" column="totalDeductionAmount" />
+		<result property="totalAmount" column="totalAmount" />
+		<result property="expireTime" column="expire_time" />
+	</resultMap>
+	<resultMap id="appointmentDetailMap" type="com.webside.message.model.AppointmentEntity">
+		<id property="id" column="id"/>
+		<result property="carNumber" column="car_number" />
+		<result property="time" column="time" />
+		<result property="extendTime" column="extend_time" />
+		<result property="price" column="price" />
+		<result property="extendPrice" column="extend_price" />
+		<result property="status" column="status" />
+		<result property="createTime" column="create_time" />
+		<result property="paymentName" column="payment_name" />
+		<result property="name" column="name" />
+		<result property="parkingLotNumber" column="parking_lot_number" />
+		<result property="totalExtendPrice" column="totalExtendPrice" />
+		<result property="totalPrice" column="totalPrice" />
+		<result property="expireTime" column="expire_time" />
+	</resultMap>
+	<resultMap id="userLongRentRecordMap" type="com.webside.message.model.UserLongRentRecordEntity">
+		<id property="id" column="id"/>
+		<result property="carParkName" column="carParkName" />
+		<result property="carParkNumber" column="carParkNumber" />
+		<result property="nickName" column="nickName" />
+		<result property="carNumber" column="car_number" />
+		<result property="telphone" column="telphone" />
+		<result property="type" column="type" />
+		<result property="handlingExpenses" column="handling_expenses" />
+		<result property="totalHandlingExpenses" column="totalHandlingExpenses" />
+		<result property="effectiveStartTime" column="effective_start_time" />
+		<result property="expireTime" column="expire_time" />
+		<result property="handleTime" column="handle_time" />
+	</resultMap>
+	<!-- 月卡办理记录查询分页-->
+	<select id="findUserLongRentRecord" resultMap="userLongRentRecordMap" flushCache="true" useCache="true">
+		SELECT ulr.id,pl.name AS carParkName,pl.parking_lot_number AS carParkNumber,ui.nick_name AS nickName,uc.car_number,ui.telphone,ulr.type,ulr.handling_expenses,ulr.effective_start_time,ulr.expire_time,ulr.handle_time
+		FROM s_user_long_rent_record ulr
+		LEFT JOIN s_user_info ui
+		ON ulr.user_id = ui.user_id
+		LEFT JOIN s_user_car uc
+		ON ulr.user_car_id = uc.id
+		LEFT JOIN parking_lot pl
+		ON ulr.parking_lot_id = pl.id
+		<where>
+			<if test="longRentTypeLeftParentheses==1">
+				(
+			</if>
+			<trim prefixOverrides="AND |OR">
+	        	<if test="monthCard==1">
+					ulr.type = 1
+				</if>
+				<if test="seasonCard==1">
+					or ulr.type = 2
+				</if>
+				<if test="yearCard==1">
+					or ulr.type = 3
+				</if>
+	        </trim>
+	        <if test="longRentTypeRightParentheses==1">
+				)
+			</if>
+			<if test="carParkName != null and carParkName != ''">
+				and pl.name = #{carParkName}
+			</if>
+			<if test="carParkNumber != null and carParkNumber != ''">
+				and pl.parking_lot_number = #{carParkNumber}
+			</if>
+			<if test="carNumber != null and carNumber != ''">
+				and uc.car_number = #{carNumber}
+			</if>
+			<if test="openTime != null and openTime != ''">
+				and ulr.handle_time BETWEEN #{openTime} AND #{endTime}
+			</if>
+			<if test="isExpiredLeftParentheses==1">
+				and (
+			</if>
+			<trim prefixOverrides="AND |OR">
+	        	<if test="cardExpired==1">
+					CURTIME() &gt; ulr.expire_time
+				</if>
+				<if test="cardUnExpired==1">
+					or CURTIME() &lt; ulr.expire_time
+				</if>
+	        </trim>
+	        <if test="isExpiredRightParentheses==1">
+				)
+			</if>
+		</where>
+		order by ulr.handle_time desc
+	</select>
+	
+	<!-- 月卡办理记录查询不分页收款汇总-->
+	<select id="findUserLongRentRecordAll" resultMap="userLongRentRecordMap" flushCache="true" useCache="true">
+		select sum(t.handling_expenses) as totalHandlingExpenses
+		FROM
+		(SELECT ulr.id,pl.name AS carParkName,pl.parking_lot_number AS carParkNumber,ui.nick_name AS nickName,uc.car_number,ui.telphone,ulr.type,ulr.handling_expenses,ulr.effective_start_time,ulr.expire_time,ulr.handle_time
+		FROM s_user_long_rent_record ulr
+		LEFT JOIN s_user_info ui
+		ON ulr.user_id = ui.user_id
+		LEFT JOIN s_user_car uc
+		ON ulr.user_car_id = uc.id
+		LEFT JOIN parking_lot pl
+		ON ulr.parking_lot_id = pl.id
+		<where>
+			<if test="longRentTypeLeftParentheses==1">
+				(
+			</if>
+			<trim prefixOverrides="AND |OR">
+	        	<if test="monthCard==1">
+					ulr.type = 1
+				</if>
+				<if test="seasonCard==1">
+					or ulr.type = 2
+				</if>
+				<if test="yearCard==1">
+					or ulr.type = 3
+				</if>
+	        </trim>
+	        <if test="longRentTypeRightParentheses==1">
+				)
+			</if>
+			<if test="carParkName != null and carParkName != ''">
+				and pl.name = #{carParkName}
+			</if>
+			<if test="carParkNumber != null and carParkNumber != ''">
+				and pl.parking_lot_number = #{carParkNumber}
+			</if>
+			<if test="carNumber != null and carNumber != ''">
+				and uc.car_number = #{carNumber}
+			</if>
+			<if test="openTime != null and openTime != ''">
+				and ulr.handle_time BETWEEN #{openTime} AND #{endTime}
+			</if>
+			<if test="isExpiredLeftParentheses==1">
+				and (
+			</if>
+			<trim prefixOverrides="AND |OR">
+	        	<if test="cardExpired==1">
+					CURTIME() &gt; ulr.expire_time
+				</if>
+				<if test="cardUnExpired==1">
+					or CURTIME() &lt; ulr.expire_time
+				</if>
+	        </trim>
+	        <if test="isExpiredRightParentheses==1">
+				)
+			</if>
+		</where>
+		order by ulr.handle_time desc)t
+	</select>
+	<!-- 预约明细查询分页-->
+	<select id="findAppointDetail" resultMap="appointmentDetailMap" flushCache="true" useCache="true">
+		SELECT a.id,a.car_number,a.time,a.extend_time,a.price,a.extend_price,a.status,a.create_time,pw.payment_name,pl.name,pl.parking_lot_number
+		FROM s_appointment a
+		LEFT JOIN parking_lot pl
+		ON a.parking_lot_id = pl.id
+		LEFT JOIN payment_way pw
+		ON a.payment_type_id = pw.id
+		<where>
+			<if test="appointStatusLeftParentheses==1">
+				(
+			</if>
+			<trim prefixOverrides="AND |OR">
+	        	<if test="appointing==1">
+					a.status = 1
+				</if>
+				<if test="cancelAppoint==1">
+					or a.status = 2
+				</if>
+				<if test="extensionAppointing==1">
+					or a.status = 3
+				</if>
+				<if test="appointFinish==1">
+					or a.status = 4
+				</if>
+				<if test="extensionAppointFinish==1">
+					or a.status = 5
+				</if>
+	        </trim>
+	        <if test="appointStatusRightParentheses==1">
+				)
+			</if>
+			<if test="carParkName != null and carParkName != ''">
+				and pl.name = #{carParkName}
+			</if>
+			<if test="carParkNumber != null and carParkNumber != ''">
+				and pl.parking_lot_number = #{carParkNumber}
+			</if>
+			<if test="carNumber != null and carNumber != ''">
+				and a.car_number = #{carNumber}
+			</if>
+			<if test="openTime != null and openTime != ''">
+				and a.create_time BETWEEN #{openTime} AND #{endTime}
+			</if>
+		</where>
+		order by a.create_time desc
+	</select>
+	<!-- 预约明细查询不分页收款汇总-->
+	<select id="findAppointDetailAll" resultMap="appointmentDetailMap" flushCache="true" useCache="true">
+		select sum(t.extend_price) as totalExtendPrice,sum(t.price) as totalPrice
+		from
+		(SELECT a.id,a.car_number,a.time,a.extend_time,a.price,a.extend_price,a.status,a.create_time,pw.payment_name,pl.name,pl.parking_lot_number
+		FROM s_appointment a
+		LEFT JOIN parking_lot pl
+		ON a.parking_lot_id = pl.id
+		LEFT JOIN payment_way pw
+		ON a.payment_type_id = pw.id
+		<where>
+			<if test="appointStatusLeftParentheses==1">
+				(
+			</if>
+			<trim prefixOverrides="AND |OR">
+	        	<if test="appointing==1">
+					a.status = 1
+				</if>
+				<if test="cancelAppoint==1">
+					or a.status = 2
+				</if>
+				<if test="extensionAppointing==1">
+					or a.status = 3
+				</if>
+				<if test="appointFinish==1">
+					or a.status = 4
+				</if>
+				<if test="extensionAppointFinish==1">
+					or a.status = 5
+				</if>
+	        </trim>
+	        <if test="appointStatusRightParentheses==1">
+				)
+			</if>
+			<if test="carParkName != null and carParkName != ''">
+				and pl.name = #{carParkName}
+			</if>
+			<if test="carParkNumber != null and carParkNumber != ''">
+				and pl.parking_lot_number = #{carParkNumber}
+			</if>
+			<if test="carNumber != null and carNumber != ''">
+				and a.car_number = #{carNumber}
+			</if>
+			<if test="openTime != null and openTime != ''">
+				and a.create_time BETWEEN #{openTime} AND #{endTime}
+			</if>
+		</where> order by a.create_time desc)t
+	</select>
+	<!-- 在场车辆查询分页-->
+	<select id="findPresentCar" resultMap="presentCarMap" flushCache="true" useCache="true">
+		SELECT          
+		DISTINCT o.id,o.create_time,o.car_number,pl.name,pl.parking_lot_number,ulr.expire_time
+		FROM s_order o
+		LEFT JOIN parking_lot pl
+		ON o.parking_lot_id = pl.id
+		LEFT JOIN parking_type pt
+		ON pl.id = pt.parking_lot_id
+		LEFT JOIN parking_lot_type plt
+		ON pt.parking_lot_type_id = plt.id
+		LEFT JOIN s_user_long_rent ulr
+		ON o.user_car_id = ulr.user_car_id AND pl.id = ulr.parking_lot_id
+		<where>
+			<if test="ParkTypeLeftParentheses==1">
+				(
+			</if>
+			<trim prefixOverrides="AND |OR">
+	        	<if test="underGroundCarpark==1">
+					plt.type = "地下停车场"
+				</if>
+				<if test="groundCarpark==1">
+					or plt.type = "地面停车场"
+				</if>
+				<if test="threeDimensionalCarpark==1">
+					or plt.type = "立体停车库"
+				</if>
+				<if test="roadSurveyCarpark==1">
+					or plt.type = "路侧停车场"
+				</if>
+	        </trim>
+	        <if test="ParkTypeRightParentheses==1">
+				)
+			</if>
+			and o.status = 1
+			<if test="carParkName != null and carParkName != ''">
+				and pl.name = #{carParkName}
+			</if>
+			<if test="carParkNumber != null and carParkNumber != ''">
+				and pl.parking_lot_number = #{carParkNumber}
+			</if>
+			<if test="carNumber != null and carNumber != ''">
+				and o.car_number = #{carNumber}
+			</if>
+			<if test="openTime != null and openTime != ''">
+				and o.create_time BETWEEN #{openTime} AND #{endTime}
+			</if>
+			
+			<if test="CarTypeLeftParentheses==1">
+				and (
+			</if>
+			<trim prefixOverrides="AND |OR">
+				<if test="longRent==1">
+					(ulr.expire_time is not null and ulr.expire_time &gt; CURTIME() )
+				</if>
+				<if test="temporaryCard==1">
+					or ulr.expire_time is null or ulr.expire_time &lt; CURTIME()
+				</if>
+	        </trim>
+	        <if test="CarTypeRightParentheses==1">
+				)
+			</if>
+		</where>
+		ORDER BY o.create_time asc
+	</select>
+	<!-- 在场车辆查询出去的结果集 -->
+	<select id="findPresentCarSubset" resultMap="presentCarMap" flushCache="true" useCache="true">
+		SELECT o.id,o.create_time,o.car_number,pl.name,pl.parking_lot_number,plt.id AS parkingTypeId,plt.type,ulr.expire_time
+		FROM s_order o
+		LEFT JOIN parking_lot pl
+		ON o.parking_lot_id = pl.id
+		LEFT JOIN parking_type pt
+		ON pl.id = pt.parking_lot_id
+		LEFT JOIN parking_lot_type plt
+		ON pt.parking_lot_type_id = plt.id
+		LEFT JOIN s_user_long_rent ulr
+		ON o.user_car_id = ulr.user_car_id AND pl.id = ulr.parking_lot_id
+		where o.id in
+		<foreach collection="list" item = "id" open="(" separator="," close=")">
+	     #{id}  
+	    </foreach>  
+		ORDER BY o.create_time asc
+	</select>
+	<!-- 订单查询出去的结果集 -->
+	<select id="findOrder" resultMap="orderMap" flushCache="true" useCache="true">
+		SELECT o.id,o.order_number,o.create_time,o.car_number,o.exit_time,o.amount,o.deduction_amount,o.business_amount,pl.name,pl.parking_lot_number,ulr.expire_time
+		FROM s_order o
+		LEFT JOIN parking_lot pl
+		ON o.parking_lot_id = pl.id
+		LEFT JOIN s_user_long_rent ulr
+		ON o.user_car_id = ulr.user_car_id AND pl.id = ulr.parking_lot_id
+		<where>
+			<if test="AccessTypeLeftParentheses==1">
+				(
+			</if>
+			<trim prefixOverrides="AND |OR">
+	        	<if test="admission==1">
+					o.exit_time is null
+				</if>
+				<if test="exit==1">
+					or o.exit_time is not null
+				</if>
+	        </trim>
+	        <if test="AccessTypeRightParentheses==1">
+				)
+			</if>
+			<if test="carParkName != null and carParkName != ''">
+				and pl.name = #{carParkName}
+			</if>
+			<if test="carParkNumber != null and carParkNumber != ''">
+				and pl.parking_lot_number = #{carParkNumber}
+			</if>
+			<if test="carNumber != null and carNumber != ''">
+				and o.car_number = #{carNumber}
+			</if>
+			<if test="openTime != null and openTime != ''">
+				and o.create_time BETWEEN #{openTime} AND #{endTime}
+			</if>
+		</where>
+		ORDER BY o.create_time asc
+	</select>
+	<!-- 停车支付明细查询出去的结果集 -->
+	<select id="findStopCarDetail" resultMap="stopCarDetailMap" flushCache="true" useCache="true">
+		SELECT o.id,o.order_number,o.create_time,o.car_number,o.exit_time,o.amount,o.deduction_amount,o.business_amount,pl.name,pl.parking_lot_number,ulr.expire_time,pw.payment_name AS paymentWayName
+		FROM s_order o
+		LEFT JOIN parking_lot pl
+		ON o.parking_lot_id = pl.id
+		LEFT JOIN s_user_long_rent ulr 
+		ON o.user_car_id = ulr.user_car_id AND pl.id = ulr.parking_lot_id
+		LEFT JOIN payment_way pw
+		ON o.payment_way_id = pw.id
+		<where>
+			<if test="payWayLeftParentheses==1">
+				(
+			</if>
+			<trim prefixOverrides="AND |OR">
+	        	<if test="cash==1">
+					pw.id = 1
+				</if>
+	        	<if test="weChat==1">
+					or pw.id = 2
+				</if>
+				<if test="alipay==1">
+					or pw.id = 3
+				</if>
+				<if test="unionPay==1">
+					or pw.id = 4
+				</if>
+	        </trim>
+	        <if test="payWayRightParentheses==1">
+				)
+			</if>
+			and o.status = 2
+			<if test="carParkName != null and carParkName != ''">
+				and pl.name = #{carParkName}
+			</if>
+			<if test="carParkNumber != null and carParkNumber != ''">
+				and pl.parking_lot_number = #{carParkNumber}
+			</if>
+			<if test="carNumber != null and carNumber != ''">
+				and o.car_number = #{carNumber}
+			</if>
+			<if test="openTime != null and openTime != ''">
+				and o.exit_time BETWEEN #{openTime} AND #{endTime}
+			</if>
+		</where>
+		ORDER BY o.create_time asc
+	</select>
+	
+	<!-- 停车支付明细查询出去的结果集收款汇总 -->
+	<select id="findStopCarDetailAll" resultMap="stopCarDetailMap" flushCache="true" useCache="true">
+		SELECT
+		SUM(t.amount)as totalAmount,SUM(t.deduction_amount) as totalDeductionAmount,SUM(t.business_amount) as totalBusinessAmount
+		from
+		(SELECT o.id,o.order_number,o.create_time,o.car_number,o.exit_time,o.amount,o.deduction_amount,o.business_amount,pl.name,pl.parking_lot_number,ulr.type AS longRentType,pw.payment_name AS paymentWayName
+		FROM s_order o
+		LEFT JOIN parking_lot pl
+		ON o.parking_lot_id = pl.id
+		LEFT JOIN s_user_long_rent ulr 
+		ON o.user_car_id = ulr.user_car_id AND pl.id = ulr.parking_lot_id
+		LEFT JOIN payment_way pw
+		ON o.payment_way_id = pw.id
+		<where>
+			<if test="payWayLeftParentheses==1">
+				(
+			</if>
+			<trim prefixOverrides="AND |OR">
+	        	<if test="cash==1">
+					pw.id = 1
+				</if>
+	        	<if test="weChat==1">
+					or pw.id = 2
+				</if>
+				<if test="alipay==1">
+					or pw.id = 3
+				</if>
+				<if test="unionPay==1">
+					or pw.id = 4
+				</if>
+	        </trim>
+	        <if test="payWayRightParentheses==1">
+				)
+			</if>
+			and o.status = 2
+			<if test="carParkName != null and carParkName != ''">
+				and pl.name = #{carParkName}
+			</if>
+			<if test="carParkNumber != null and carParkNumber != ''">
+				and pl.parking_lot_number = #{carParkNumber}
+			</if>
+			<if test="carNumber != null and carNumber != ''">
+				and o.car_number = #{carNumber}
+			</if>
+			<if test="openTime != null and openTime != ''">
+				and o.exit_time BETWEEN #{openTime} AND #{endTime}
+			</if>
+		</where>) t
+	</select>
+	
+	<!-- 出入车辆查询分页-->
+	<select id="findAccessCar" resultMap="accessCarMap" flushCache="true" useCache="true">
+		SELECT          
+		DISTINCT o.id,o.create_time,o.exit_time,o.car_number,pl.name,pl.parking_lot_number,ulr.expire_time
+		FROM s_order o
+		LEFT JOIN parking_lot pl
+		ON o.parking_lot_id = pl.id
+		LEFT JOIN parking_type pt
+		ON pl.id = pt.parking_lot_id
+		LEFT JOIN parking_lot_type plt
+		ON pt.parking_lot_type_id = plt.id
+		LEFT JOIN s_user_long_rent ulr
+		ON o.user_car_id = ulr.user_car_id AND pl.id = ulr.parking_lot_id
+		<where>
+			<if test="AccessTypeLeftParentheses==1">
+				(
+			</if>
+			<trim prefixOverrides="AND |OR">
+	        	<if test="admission==1">
+					o.exit_time is null
+				</if>
+				<if test="exit==1">
+					or o.exit_time is not null
+				</if>
+	        </trim>
+	        <if test="AccessTypeRightParentheses==1">
+				)
+			</if>
+			<if test="carParkName != null and carParkName != ''">
+				and pl.name = #{carParkName}
+			</if>
+			<if test="carParkNumber != null and carParkNumber != ''">
+				and pl.parking_lot_number = #{carParkNumber}
+			</if>
+			<if test="carNumber != null and carNumber != ''">
+				and o.car_number = #{carNumber}
+			</if>
+			<if test="openTime != null and openTime != ''">
+				and o.create_time BETWEEN #{openTime} AND #{endTime}
+			</if>
+			
+			<if test="CarTypeLeftParentheses==1">
+				and (
+			</if>
+			<trim prefixOverrides="AND |OR">
+	        	<if test="longRent==1">
+					(ulr.expire_time is not null and ulr.expire_time &gt; CURTIME() )
+				</if>
+				<if test="temporaryCard==1">
+					or ulr.expire_time is null or ulr.expire_time &lt; CURTIME()
+				</if>
+	        </trim>
+	        <if test="CarTypeRightParentheses==1">
+				)
+			</if>
+		</where>
+		ORDER BY o.create_time asc
+	</select>
+	<!-- 出入车辆查询出去的结果集 -->
+	<select id="findAccessCarSubset" resultMap="accessCarMap" flushCache="true" useCache="true">
+		SELECT o.id,o.create_time,o.exit_time,o.car_number,pl.name,pl.parking_lot_number,plt.id AS parkingTypeId,plt.type,ulr.expire_time
+		FROM s_order o
+		LEFT JOIN parking_lot pl
+		ON o.parking_lot_id = pl.id
+		LEFT JOIN parking_type pt
+		ON pl.id = pt.parking_lot_id
+		LEFT JOIN parking_lot_type plt
+		ON pt.parking_lot_type_id = plt.id
+		LEFT JOIN s_user_long_rent ulr
+		ON o.user_car_id = ulr.user_car_id AND pl.id = ulr.parking_lot_id
+		where o.id in
+		<foreach collection="list" item = "id" open="(" separator="," close=")">
+	     #{id}  
+	    </foreach>  
+		ORDER BY o.create_time asc
+	</select>
+	
+</mapper>

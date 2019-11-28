@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+	<title>停简捷运营管理后台</title>
+    <script src="resources/js/customer/common/commonCss.js"></script>
+    <script src="resources/js/customer/common/commonJs.js"></script>
+</head>
+<script type="text/javascript">
+$(document).ready(function() {
+	$('#backgroundSlider').backgroundSlider({
+		direction: 'slide', //场景动画类型：【in】:拉近;【out】:拉远;【slide】:幻灯片
+        speed: 5000
+	});
+});
+</script>
+<body>
+	<div class="main-content">
+		<div class="row">
+			<div class="col-sm-10 col-sm-offset-1">
+				<div class="login-container">
+					<div class="center">
+						<h1>
+							<img src="resources/images/logo.png"/>
+						</h1>
+					</div>
+
+					<div class="space-6"></div>
+
+						<div class="position-relative">
+							<div id="login-box"
+								class="login-box visible widget-box no-border">
+								<div class="widget-body">
+									<div class="widget-main">
+										<h4 class="header blue lighter bigger">
+											<i class="ace-icon fa fa-coffee blue"></i> 请输入帐号信息
+										</h4>
+
+										<div class="space-6"></div>
+
+										<form id="loginform" name="loginform"
+											action="login_login"
+											method="post">
+											<fieldset>
+												<label class="block clearfix"> 
+												<span class="block input-icon input-icon-right"> 
+													<input  name="accountName" id="accountName" type="email" class="form-control" placeholder="邮箱" /> 
+													<i class="ace-icon fa fa-user"></i>
+												</span>
+												</label> 
+												<label class="block clearfix"> 
+												<span class="block input-icon input-icon-right"> 
+													<input  name="password" id="password" type="password" class="form-control" placeholder="密码" />
+													<i class="ace-icon fa fa-lock"></i>
+												</span>
+												</label>
+												<label class="block clearfix"> 
+													<input id="captcha" name="captcha" type="text" class="form-control" placeholder="验证码" style="width:60%;float:left;"/>
+												<img id="kaptchaImage" src="captcha.html" style="cursor:pointer; margin-left:10px;" title="点击更换"/>  
+												</label>
+
+												<div class="space"></div>
+
+												<div class="clearfix">
+												<input type="hidden" id="rememberMe" name="rememberMe" value="false"/>
+													<label class="inline"> <input id="rememberMeCheckBox" type="checkbox"
+														class="ace" /> <span class="lbl"> 记住我</span>
+													</label>
+
+													<button onclick="login();" type="button" 
+														class="width-35 pull-right btn btn-sm btn-primary">
+														<i class="ace-icon fa fa-key"></i> <span
+															class="bigger-110">登录</span>
+													</button>
+												</div>
+											<div class="space-4"></div>
+										</fieldset>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /.main-container -->
+	<!-- background -->
+	<div id="backgroundSlider">
+		<img src="resources/images/background/1.jpg" name="1"/>
+		<img src="resources/images/background/2.jpg" name="2"/>
+		<img src="resources/images/background/3.jpg" name="3"/>
+		<img src="resources/images/background/4.jpg" name="4"/>
+		<img src="resources/images/background/5.jpg" name="5"/>
+	</div>
+	<!-- / #backgroundSlider -->
+</body>
+
+</html>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.webside.parkinglot.mapper.ParkingLotServerMapper">
+	<!--mybatis ehcache缓存配置,以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 -->
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/> 
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+	<sql id="parkingLotServerAttributes">
+		parking_lot_id,
+		serv_name,
+		img_url,
+		create_time,
+		update_time
+	</sql>
+	<sql id="parkingLotServerSelectAttributes">
+		pls.parking_lot_id,
+		pls.serv_name,
+		pls.img_url,
+		pls.create_time,
+		pls.update_time
+	</sql>
+	
+	<resultMap id="parkingLotServerMap" type="com.webside.parkinglot.model.ParkingLotServerEntity">
+		<id property="id" column="id"/>
+		<result property="parkingLotId" column="parking_lot_id" />
+		<result property="servName" column="serv_name" />
+		<result property="imgUrl" column="img_url" />
+		<result property="parkingLotName" column="parkingLotName" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+	</resultMap>
+	
+	
+	<select id="findPage" resultMap="parkingLotServerMap" flushCache="true" useCache="true">
+		SELECT
+		pls.id,<include refid="parkingLotServerSelectAttributes"/>,pl.name as parkingLotName
+		FROM parking_lot_serv pls
+		left join parking_lot pl
+		on pls.parking_lot_id = pl.id
+		<where>
+			<if test="parkingLotId != null and parkingLotId != '' and parkingLotId != 0">
+				parking_lot_id = #{parkingLotId}
+			</if>
+			<if test="servName != null and servName != ''">
+				serv_name like '%${servName}%'
+			</if>
+		</where>
+	</select>
+	
+	<select id="findById" resultMap="parkingLotServerMap" flushCache="true" useCache="true">
+		SELECT
+			id,<include refid="parkingLotServerAttributes"/>
+		FROM parking_lot_serv
+		where id = #{id}
+	</select>
+	<insert id="insert"  useGeneratedKeys="true" keyProperty="id">
+		insert into parking_lot_serv (
+			<include refid="parkingLotServerAttributes"/>
+		)   
+		values (
+		#{parkingLotId},
+		#{servName},
+		#{imgUrl},
+		#{createTime},
+		#{updateTime}
+			)  
+	</insert>
+	
+	<delete id="delete" >
+       <![CDATA[ 
+       delete from parking_lot_serv where id in
+       ]]> 
+       <foreach collection="array" item = "id" open="(" separator="," close=")">
+	    #{id}  
+	   </foreach> 
+	</delete>
+	
+	<update id="update"  flushCache="true">
+		update parking_lot_serv
+		<set>
+			<if test="parkingLotId != null and parkingLotId != ''">
+				parking_lot_id = #{parkingLotId},
+			</if>
+			<if test="servName != null and servName != ''">
+				serv_name = #{servName},
+			</if>
+			<if test="imgUrl != null and imgUrl != ''">
+				img_url = #{imgUrl},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+</mapper>

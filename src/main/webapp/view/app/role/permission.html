@@ -1,0 +1,84 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>权限编辑</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="../../../resources/js/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="../../../resources/fonts/fontawesome/font-awesome.min.css" media="all">
+  <script src="../../../resources/js/jquery/jquery-2.1.4.min.js"  type="text/javascript"></script>
+  <script type="text/javascript" src="../../../resources/js/jquery/jquery.form.min.js"></script>
+  <link type="text/css" rel="stylesheet" href="../../..//resources/js/jstree/themes/default/style.css"/>
+  <script type="text/javascript" src="../../../resources/js/jstree/jstree.min.js"></script>   
+  <script type="text/javascript" src="../../../resources/js/jstree/jstree.checkbox.js"></script> 
+  <script type="text/javascript" src="../../../resources/js/underscore/underscore-min.js"></script> 
+  <!-- 引入angular的js -->
+  <script type="text/javascript" src="../../../resources/js/angularjs/angular.min.js"></script>
+  <script type="text/javascript" src="../../../resources/js/customer/base/base.js"></script>
+  <script type="text/javascript" src="../../../resources/js/customer/role/roleService.js"></script>
+  <script type="text/javascript" src="../../../resources/js/customer/role/roleController.js"></script>
+</head>
+
+<body ng-app="stopSimple" ng-controller="roleController" ng-init="initTree()">
+  <div class="row" style="margin-top:5px;">
+	<div class="col-xs-12">
+		<form id="permissionForm" name="permissionForm" class="form-horizontal" role="form" method="post">
+		<input type="hidden" id="pageNum" name="pageNum" value="${page.pageNum }">
+		<input type="hidden" id="pageSize" name="pageSize" value="${page.pageSize }">
+		<input type="hidden" id="orderByColumn" name="orderByColumn" value="${page.orderByColumn }">
+		<input type="hidden" id="orderByType" name="orderByType" value="${page.orderByType }">
+		<input type="hidden" id="id" name="id" value="${roleEntity.id }">
+		   <!-- 资源树 -->
+		   <div class="form-group">
+		      <div class="col-sm-10">
+		         <div id="tree"></div>
+		      </div>
+		   </div>
+		</form>
+		<div class="hr hr-dotted"></div>
+	</div>
+  </div>
+
+  <script src="../../../resources/js/layuiadmin/layui/layui.js"></script>  
+  <script>
+  layui.config({
+    base: '../../../resources/js/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'form'], function(){
+    var $ = layui.$
+    ,form = layui.form;
+    
+    //监听提交
+    form.on('submit(layuiadmin-app-form-submit)', function(data){
+      var field = data.field; //获取提交的字段
+      var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引  
+      //提交 Ajax 成功后，关闭当前弹层并重载表格
+      //$.ajax({});
+      console.log(1111111111)
+      parent.layui.table.reload('LAY-app-content-list'); //重载表格
+      parent.layer.close(index); //再执行关闭 
+    });
+  //监听提交
+    form.on('submit(layuiadmin-app-form-edit)', function(data){
+      var field = data.field; //获取提交的字段
+      var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引  
+      //提交 Ajax 成功后，关闭当前弹层并重载表格
+      //$.ajax({});
+      console.log(1111111111)
+      parent.layui.table.reload('LAY-app-content-list'); //重载表格
+      parent.layer.close(index); //再执行关闭 
+    });
+  })
+  function grantPermission(roleId){
+	  var plateformAccountElement = document.querySelector("[ng-controller=roleController]");
+	  var scope = angular.element(plateformAccountElement).scope(); 
+	  scope.grantPermission(roleId,layer);
+  }
+  </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+document.write('<script src="resources/js/jquery/jquery-2.1.4.min.js"  type="text/javascript"></script>');
+document.write('<script src="resources/js/jquery/jquery.form.min.js"  type="text/javascript"></script>');
+document.write('<script src="resources/js/bootstrap/bootstrap.min.js"   type="text/javascript"></script>');
+document.write('<script src="resources/js/jqueryui/jquery-ui.min.js"   type="text/javascript"></script>');
+document.write('<script src="resources/js/jqueryui/jquery.ui.touch-punch.min.js"   type="text/javascript"></script>');
+document.write('<script src="resources/js/nicescroll/jquery.nicescroll.min.js"   type="text/javascript"></script>');
+document.write('<script src="resources/js/jquery-validation/jquery.validate.min.js"   type="text/javascript"></script>');
+document.write('<script src="resources/js/jquery-validation/localization/messages_zh.js"   type="text/javascript"></script>');
+document.write('<script src="resources/js/underscore/underscore-min.js"   type="text/javascript"></script>');
+document.write('<script src="resources/js/purl/purl.min.js"   type="text/javascript"></script>');
+document.write('<script src="resources/js/scrollreveal/scrollreveal.min.js"   type="text/javascript"></script>');
+document.write('<script src="resources/js/customer/index/index.min.js"   type="text/javascript"></script>');
+document.write('<script src="resources/js/backgroundSlider/backgroundSlider.min.js"   type="text/javascript"></script>');
+document.write('<script src="resources/js/customer/index/login.min.js"   type="text/javascript"></script>');
